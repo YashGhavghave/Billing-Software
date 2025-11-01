@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import ModelForm
 from django.utils import timezone
 
 
@@ -109,3 +110,4 @@ class CottonData(models.Model):
 
     def __str__(self):
         return f"Cotton Bill - {self.customer.name} ({self.date_of_entry.strftime('%d-%m-%Y')})"
+
