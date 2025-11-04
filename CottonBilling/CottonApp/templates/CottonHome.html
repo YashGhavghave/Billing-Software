@@ -1,170 +1,122 @@
-{% load tailwind_tags %}
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cotton Billing Dashboard</title>
-    {% tailwind_css %}
-</head>
-<body class="bg-gray-50 text-gray-900">
+{% extends "index.html" %}
 
-    <!-- Header -->
-    <header class="bg-indigo-600 text-white py-6 shadow-md">
-        <h1 class="text-3xl font-bold text-center">🌾 Cotton Billing Dashboard</h1>
-    </header>
+{% block content %}
+<style>
+  /* Make table look like Excel sheet */
+  .excel-table {
+    border-collapse: collapse !important;
+    width: 100%;
+    background-color: #fff;
+  }
+  .excel-table th, .excel-table td {
+    border: 1px solid #444 !important;
+    padding: 6px 8px !important;
+    font-size: 14px;
+    vertical-align: middle !important;
+    text-align: center !important;
+  }
+  .excel-table th {
+    background-color: #2c3e50 !important;
+    color: white;
+    font-weight: bold;
+  }
+  .excel-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  .excel-table tr:hover {
+    background-color: #e3f2fd;
+  }
+  .table-container {
+    overflow-x: auto;
+  }
+  .card {
+    border-radius: 12px;
+  }
+</style>
 
-    
 
 
-    <!-- Navigation Buttons -->
-    <div class="flex flex-wrap gap-4 justify-center mt-8">
-        <a href="{% url 'Add Customer' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md font-semibold transition">Add Customer</a>
-        <a href="{% url 'Add Driver' %}" class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-lg shadow-md font-semibold transition">Add Driver</a>
-        <a href="{% url 'Add Cotton' %}" class="bg-purple-500 hover:bg-purple-600 text-white px-5 py-2 rounded-lg shadow-md font-semibold transition">Add Cotton</a>
-        <a href="{% url 'Add Vehicle' %}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-5 py-2 rounded-lg shadow-md font-semibold transition">Add Vehicle Unload</a>
+
+
+<button class="bg-amber-400 absolute right-10 rounded-2xl px-10 p-2"><a href='{% url "Add Cotton" %}'>Add Cotton Entry</a></button>
+<div class="container mt-5">
+  <div class="card shadow-lg border-0 pt-15">
+
+    <div class="card-body bg-light">
+      {% if cotton_entries %}
+        <div class="table-container">
+          <table class="excel-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Farmer Name</th>
+                <th>Contact No.</th>
+                <th>Address</th>
+                <th>Driver Name</th>
+                <th>Vehicle No.</th>
+                <th>Mobile No.</th>
+                <th>Loaded (kg)</th>
+                <th>Unloaded (kg)</th>
+                <th>Net (kg)</th>
+                <th>Ginning</th>
+                <th>Market Rate (₹)</th>
+                <th>Bedding Rate (₹)</th>
+                <th>Total (₹)</th>
+                <th>Advance (₹)</th>
+                <th>Balance (₹)</th>
+                <th>Date of Entry</th>
+                <th>Date of Unloading</th>
+                <th>Payment</th>
+                <th>Receipt</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {% for item in cotton_entries %}
+              <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.contact_number }}</td>
+                <td>{{ item.address|default:"-" }}</td>
+                <td>{{ item.driver_name }}</td>
+                <td>{{ item.vehicle_number }}</td>
+                <td>{{ item.mobile_number }}</td>
+                <td>{{ item.loaded_vehicle_weight }}</td>
+                <td>{{ item.unloading_vehicle_weight }}</td>
+                <td>{{ item.net_weight }}</td>
+                <td>{{ item.ginning_name }}</td>
+                <td>{{ item.market_rate }}</td>
+                <td>{{ item.bedding_rate }}</td>
+                <td class="fw-bold text-success">{{ item.total_amount }}</td>
+                <td>{{ item.advance_paid }}</td>
+                <td class="fw-bold {% if item.balance_amount > 0 %}text-danger{% else %}text-success{% endif %}">
+                  {{ item.balance_amount }}
+                </td>
+                <td>{{ item.date_of_entry|date:"d-m-Y H:i" }}</td>
+                <td>{{ item.date_of_unloading|date:"d-m-Y H:i" }}</td>
+                <td>
+                  {% if item.is_paid %}
+                    <span class="badge bg-success">Paid</span>
+                  {% else %}
+                    <span class="badge bg-danger">Unpaid</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% comment %} <a href="{% url 'download_receipt' item.id %}" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-download"></i> Download
+                  </a> {% endcomment %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="alert alert-info text-center fs-5 mb-0 rounded-3">
+          No Cotton Data Available
+        </div>
+      {% endif %}
     </div>
-
-    <!-- Main Dashboard Content -->
-    <main class="max-w-7xl mx-auto py-10 px-4 space-y-10">
-
-        <!-- Customer Data -->
-        <section class="bg-white rounded-2xl shadow-md p-6">
-            <h2 class="text-2xl font-semibold text-indigo-600 mb-4">Customer Data</h2>
-            <div class="overflow-x-auto">
-                <table class="min-w-full border border-gray-200 rounded-lg">
-                    <thead class="bg-indigo-100 text-indigo-800">
-                        <tr>
-                            <th class="px-4 py-2 text-left">Name</th>
-                            <th class="px-4 py-2 text-left">Contact Number</th>
-                            <th class="px-4 py-2 text-left">Address</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for c in customers %}
-                        <tr class="border-t hover:bg-indigo-50">
-                            <td class="px-4 py-2">{{ c.name }}</td>
-                            <td class="px-4 py-2">{{ c.contact_number }}</td>
-                            <td class="px-4 py-2">{{ c.address }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr><td colspan="3" class="text-center py-4 text-gray-500">No customers found.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Driver Data -->
-        <section class="bg-white rounded-2xl shadow-md p-6">
-            <h2 class="text-2xl font-semibold text-green-600 mb-4">Driver Data</h2>
-            <div class="overflow-x-auto">
-                <table class="min-w-full border border-gray-200 rounded-lg">
-                    <thead class="bg-green-100 text-green-800">
-                        <tr>
-                            <th class="px-4 py-2 text-left">Driver Name</th>
-                            <th class="px-4 py-2 text-left">Vehicle No</th>
-                            <th class="px-4 py-2 text-left">Mobile</th>
-                            <th class="px-4 py-2 text-left">Weight (kg)</th>
-                            <th class="px-4 py-2 text-left">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for d in drivers %}
-                        <tr class="border-t hover:bg-green-50">
-                            <td class="px-4 py-2">{{ d.driver_name }}</td>
-                            <td class="px-4 py-2">{{ d.vehicle_number }}</td>
-                            <td class="px-4 py-2">{{ d.mobile_number }}</td>
-                            <td class="px-4 py-2">{{ d.vehicle_weight }}</td>
-                            <td class="px-4 py-2">{{ d.date_of_entry|date:"d M Y" }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr><td colspan="5" class="text-center py-4 text-gray-500">No drivers found.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Vehicle Unloading Data -->
-        <section class="bg-white rounded-2xl shadow-md p-6">
-            <h2 class="text-2xl font-semibold text-yellow-600 mb-4">Vehicle Unloading Data</h2>
-            <div class="overflow-x-auto">
-                <table class="min-w-full border border-gray-200 rounded-lg">
-                    <thead class="bg-yellow-100 text-yellow-800">
-                        <tr>
-                            <th class="px-4 py-2 text-left">Driver</th>
-                            <th class="px-4 py-2 text-left">Loaded</th>
-                            <th class="px-4 py-2 text-left">Unloaded</th>
-                            <th class="px-4 py-2 text-left">Net Weight</th>
-                            <th class="px-4 py-2 text-left">Ginning Name</th>
-                            <th class="px-4 py-2 text-left">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for v in unloading_entries %}
-                        <tr class="border-t hover:bg-yellow-50">
-                            <td class="px-4 py-2">{{ v.driver }}</td>
-                            <td class="px-4 py-2">{{ v.loaded_vehicle_weight }}</td>
-                            <td class="px-4 py-2">{{ v.unloading_vehicle_weight }}</td>
-                            <td class="px-4 py-2">{{ v.net_weight }}</td>
-                            <td class="px-4 py-2">{{ v.ginning_name }}</td>
-                            <td class="px-4 py-2">{{ v.date_of_unloading|date:"d M Y" }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr><td colspan="6" class="text-center py-4 text-gray-500">No unloading data found.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Cotton Data -->
-        <section class="bg-white rounded-2xl shadow-md p-6">
-            <h2 class="text-2xl font-semibold text-blue-600 mb-4">Cotton Data</h2>
-            <div class="overflow-x-auto">
-                <table class="min-w-full border border-gray-200 rounded-lg">
-                    <thead class="bg-blue-100 text-blue-800">
-                        <tr>
-                            <th class="px-4 py-2 text-left">Customer</th>
-                            <th class="px-4 py-2 text-left">Driver</th>
-                            <th class="px-4 py-2 text-left">Market Rate</th>
-                            <th class="px-4 py-2 text-left">Bedding Rate</th>
-                            <th class="px-4 py-2 text-left">Total</th>
-                            <th class="px-4 py-2 text-left">Advance</th>
-                            <th class="px-4 py-2 text-left">Balance</th>
-                            <th class="px-4 py-2 text-left">Paid</th>
-                            <th class="px-4 py-2 text-left">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for c in cotton_entries %}
-                        <tr class="border-t hover:bg-blue-50">
-                            <td class="px-4 py-2">{{ c.customer }}</td>
-                            <td class="px-4 py-2">{{ c.driver }}</td>
-                            <td class="px-4 py-2">{{ c.market_rate }}</td>
-                            <td class="px-4 py-2">{{ c.bedding_rate }}</td>
-                            <td class="px-4 py-2">{{ c.total_amount }}</td>
-                            <td class="px-4 py-2">{{ c.advance_paid }}</td>
-                            <td class="px-4 py-2">{{ c.balance_amount }}</td>
-                            <td class="px-4 py-2">{% if c.is_paid %}✅{% else %}❌{% endif %}</td>
-                            <td class="px-4 py-2">{{ c.date_of_entry|date:"d M Y" }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr><td colspan="9" class="text-center py-4 text-gray-500">No cotton data found.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="text-center py-6 text-gray-500 text-sm">
-        © {{ now|date:"Y" }} Cotton Billing Software. All rights reserved.
-    </footer>
-
-</body>
-</html>
+  </div>
+</div>
+{% endblock %}

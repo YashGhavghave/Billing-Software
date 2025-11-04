@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'compressor',
     'tailwind',
     'theme',
-    'CottonApp'
+    'CottonApp',
+    # 'django_afip'
 ]
 
 MIDDLEWARE = [
