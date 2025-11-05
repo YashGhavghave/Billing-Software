@@ -1,5 +1,6 @@
 from django.forms import ModelForm
 from .models import CottonData
+from django import forms
 
 class CottonDataForm(ModelForm):
     class Meta:
@@ -11,7 +12,6 @@ class CottonDataForm(ModelForm):
             'driver_name',
             'vehicle_number',
             'mobile_number',
-            # 'vehicle_weight',
             'market_rate',
             'bedding_rate',
             'total_amount',
@@ -24,3 +24,27 @@ class CottonDataForm(ModelForm):
             'net_weight',
             'date_of_unloading',
         ]
+        widgets = {
+            'loaded_vehicle_weight': forms.NumberInput(attrs={'id': 'loaded_vehicle_weight'}),
+            'unloading_vehicle_weight': forms.NumberInput(attrs={'id': 'unloading_vehicle_weight'}),
+            'bedding_rate': forms.NumberInput(attrs={'id': 'bedding_rate'}),
+            'advance_paid': forms.NumberInput(attrs={'id': 'advance_paid'}),
+            
+            # Computed (read-only) fields
+            'net_weight': forms.NumberInput(attrs={
+                'id': 'net_weight', 
+                'readonly': True,
+                'class': 'bg-gray-100 cursor-not-allowed'
+            }),
+            'total_amount': forms.NumberInput(attrs={
+                'id': 'total_amount', 
+                'readonly': True,
+                'class': 'bg-gray-100 cursor-not-allowed'
+            }),
+            'balance_amount': forms.NumberInput(attrs={
+                'id': 'balance_amount', 
+                'readonly': True,
+                'class': 'bg-gray-100 cursor-not-allowed'
+            }),
+        }
+

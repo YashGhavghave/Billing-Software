@@ -25,18 +25,18 @@ class CottonData(models.Model):
     balance_amount = models.FloatField("Balance Amount (₹)", default=0)
     is_paid = models.BooleanField("Payment Received (Cash)", default=False)
 
-    def save(self, *args, **kwargs):
-        self.net_weight = self.loaded_vehicle_weight - self.unloading_vehicle_weight
-        if self.unloading_vehicle_weight:
-            net_weight = self.unloading_vehicle_weight - self.loaded_vehicle_weight
-            self.total_amount = (net_weight / 100) * self.bedding_rate
-        else:
-            self.total_amount = 0
+    # def save(self, *args, **kwargs):
+    #     self.net_weight = self.loaded_vehicle_weight - self.unloading_vehicle_weight
+    #     if self.unloading_vehicle_weight:
+    #         net_weight = self.unloading_vehicle_weight - self.loaded_vehicle_weight
+    #         self.total_amount = (net_weight / 100) * self.bedding_rate
+    #     else:
+    #         self.total_amount = 0
 
-        self.balance_amount = self.total_amount - self.advance_paid
-        self.is_paid = self.balance_amount <= 0
+    #     self.balance_amount = self.total_amount - self.advance_paid
+    #     self.is_paid = self.balance_amount <= 0
 
-        super().save(*args, **kwargs)
+    #     super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Cotton Data"

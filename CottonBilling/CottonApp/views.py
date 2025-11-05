@@ -1,58 +1,162 @@
 from django.shortcuts import render, redirect
-from .models import CottonData, InvoiceSettings
+from .models import CottonData
 from .forms import  CottonDataForm
 from django.db.models import Q
-import reportlab
-from reportlab.pdfgen import canvas
-from django.http import FileResponse
-from . import views
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, tables, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
 import io
 from reportlab.lib import pagesizes
 from .models import InvoiceSettings
 from django.http import HttpResponse
+from reportlab.lib.pagesizes import A4, landscape
+from reportlab.lib.units import inch
+from django.http import HttpResponse
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import inch
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+import io
+from datetime import datetime
+from .models import CottonData
 
+def GenerateReceipt(request, invoice_id):
+    cotton_data = CottonData.objects.filter(id=invoice_id)
 
-def some_view(request, invoice_id):
+    if not cotton_data.exists():
+        return HttpResponse("Invoice not found", status=404)
 
-    invoice = InvoiceSettings.objects.get(id=invoice_id)
+    buffer = io.BytesIO()
+    styles = getSampleStyleSheet()
+    story = []
 
+    # --- Header Section ---
+    title_style = ParagraphStyle(
+        'Title',
+        fontSize=22,
+        textColor=colors.HexColor("#1E3A8A"),
+        alignment=1,  # Center
+        fontName="Helvetica-Bold",
+        spaceAfter=8,
+    )
+    subtitle_style = ParagraphStyle(
+        'Subtitle',
+        fontSize=12,
+        textColor=colors.HexColor("#4B5563"),
+        alignment=1,
+        spaceAfter=20,
+    )
 
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="invoice.pdf"'
+    story.append(Paragraph("MANDI BILLING SOFTWARE", title_style))
+    story.append(Spacer(3, 9))
+    story.append(Paragraph("Cotton Billing Invoice", subtitle_style))
 
-    buffer= io.BytesIO()
-    p= canvas.Canvas(buffer, pagesize= pagesizes.A4)
-    p.setTitle(f"{invoice.customer_name}")
-    p.setFont("Helvetica", 12)
+    # --- Table Header and Data ---
+    data = [[
+        'Customer Name',
+        'Customer Contact',
+        'Driver Name',
+        'Vehicle Number',
+        'Ginning Name',
+        'Total Weight',
+        'Cotton Weight',
+        'Market Rate',
+        'Bedding Rate',
+        'Total Amount',
+        'Advance Paid',
+        'Balance Amount',
+    ]]
 
-    x, y = 200, 750
-    line_height = 20  # <-- spacing between lines (in points)
+    for cotton in cotton_data:
+        data.append([
+            cotton.name,
+            cotton.contact_number,
+            cotton.driver_name,
+            cotton.vehicle_number,
+            cotton.ginning_name,
+            str(cotton.loaded_vehicle_weight),
+            str(cotton.net_weight),
+            str(cotton.market_rate),
+            str(cotton.bedding_rate),
+            str(cotton.total_amount),
+            str(cotton.advance_paid),
+            str(cotton.balance_amount),
+        ])
 
-    lines = [
-        f"Bill Id: {invoice.id}",
-        f"Customer Name: {invoice.customer_name}",
-        f"Customer Contact: {invoice.customer_number}",
-        f"Driver Name: {invoice.driver_name}",
-        f"Vehicle Number: {invoice.vehicle_number}",
-        f"Ginning Name: {invoice.ginning_name}",
-        f"Total Weight: {invoice.total_weight}",
-        f"Cotton Weight: {invoice.cotton_weight}",
-        f"Market Rate: {invoice.market_rate}",
-        f"Bedding Rate: {invoice.bedding_rate}",
-        f"Total Amount: {invoice.total_amount}",
-        f"Advance Paid: {invoice.advance_paid}",
-        f"Balance Amount: Rs. {invoice.balance_amount}",
+    # --- Column Widths (your same config) ---
+    col_widths = [
+        1.6 * inch, 1.6 * inch, 1.6 * inch, 1.2 * inch,
+        1.6 * inch, 1.0 * inch, 1.0 * inch, 1.0 * inch,
+        1.2 * inch, 1.0 * inch, 1.0 * inch, 1.0 * inch
     ]
 
-    for line in lines:
-        p.drawString(x, y, line)
-        y -= line_height 
+    # --- Professional Table Styling ---
+    table = Table(data, colWidths=col_widths)
+    table.setStyle(TableStyle([
+        # Header row
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#2563EB")),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('ALIGN', (0, 0), (-1, 0), 'CENTER'),
+        ('FONTSIZE', (0, 0), (-1, 0), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
 
-    p.showPage()
-    p.save()
+        # Data rows
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (1, 0), (-1, 1), 9),
+        ('ALIGN', (0, 1), (-1, -1), 'CENTER'),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.whitesmoke, colors.HexColor("#F9FAFB")]),
+
+        # Borders
+        ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
+        ('BOX', (0, 0), (-1, -1), 1, colors.HexColor("#2563EB")),
+    ]))
+
+    # --- Page Size Calculation (unchanged) ---
+    table_width, table_height = table.wrap(0, 0)
+    left_margin = right_margin = 50
+    top_margin = bottom_margin = 30
+    page_width = table_width + left_margin + right_margin
+    page_height = table_height + top_margin + bottom_margin
+    min_width, min_height = A4
+    page_width = max(page_width, min_width)
+    page_height = max(page_height, min_height)
+
+    # --- Document Setup (same as your version) ---
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=(page_width, page_height),
+        leftMargin=left_margin,
+        rightMargin=right_margin,
+        topMargin=top_margin,
+        bottomMargin=bottom_margin
+    )
+
+    doc.title=f'Cotton Billing Invoice - {cotton_data.first().name}'
+
+    # --- Add to PDF ---
+    story.append(Spacer(1, 12))
+    story.append(table)
+    story.append(Spacer(1, 24))
+
+    # --- Footer Section ---
+    footer_style = ParagraphStyle(
+        'Footer',
+        fontSize=9,
+        alignment=1,
+        textColor=colors.HexColor("#6B7280")
+    )
+    story.append(Paragraph("Thank you for choosing Mandi Billing Software.", footer_style))
+    story.append(Paragraph("support@mandibilling.com | +91 98765 43210", footer_style))
+
+    # --- Build PDF ---
+    doc.build(story)
     buffer.seek(0)
-    return FileResponse(buffer, as_attachment=True, filename=('iti.pdf'))
 
+    response = HttpResponse(buffer, content_type='application/pdf')
+    response['Content-Disposition'] = 'inline; filename=cotton_bill.pdf'
+    return response
 
 # Create your views here.
 def home(request):

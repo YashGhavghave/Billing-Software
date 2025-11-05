@@ -1,50 +1,123 @@
 {% extends "index.html" %}
+{% load static tailwind_tags %}
+
+<title>
+  {% block Title %} Cotton Billing | Dashboard {% endblock %}
+</title>
 
 {% block content %}
+{% tailwind_css %}
+
 <style>
-  /* Make table look like Excel sheet */
+  /* Page Layout Enhancements */
+  body {
+    background: linear-gradient(135deg, #eef2ff, #f8fafc);
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Table Styling */
   .excel-table {
-    border-collapse: collapse !important;
+    border-collapse: collapse;
     width: 100%;
-    background-color: #fff;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   }
+
   .excel-table th, .excel-table td {
-    border: 1px solid #444 !important;
-    padding: 6px 8px !important;
+    border: 1px solid #e5e7eb;
+    padding: 10px 12px;
+    text-align: center;
     font-size: 14px;
-    vertical-align: middle !important;
-    text-align: center !important;
   }
+
   .excel-table th {
-    background-color: #2c3e50 !important;
-    color: white;
-    font-weight: bold;
+    background: linear-gradient(to right, #2563eb, #3b82f6);
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
   }
+
   .excel-table tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: #f9fafb;
   }
+
   .excel-table tr:hover {
-    background-color: #e3f2fd;
+    background-color: #e0f2fe;
+    transition: background-color 0.2s;
   }
-  .table-container {
-    overflow-x: auto;
-  }
+
+  /* Card Styling */
   .card {
+    border-radius: 16px;
+    background: white;
+    padding: 2rem;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+    margin-top: 2rem;
+  }
+
+  /* Header button */
+  .add-btn {
+    background: linear-gradient(to right, #fbbf24, #f59e0b);
+    color: #111827;
+    font-weight: 600;
+    padding: 10px 20px;
     border-radius: 12px;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .add-btn:hover {
+    transform: scale(1.05);
+    background: linear-gradient(to right, #facc15, #f59e0b);
+  }
+
+  .badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .badge-success {
+    background-color: #22c55e;
+    color: white;
+  }
+
+  .badge-danger {
+    background-color: #ef4444;
+    color: white;
+  }
+
+  .download-link {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .download-link:hover {
+    text-decoration: underline;
   }
 </style>
 
+<!-- Top Header Section -->
+<div class="flex justify-between items-center mb-6 mt-6 px-8">
+  <h1 class="text-3xl font-bold text-blue-700 drop-shadow-sm">
+    Cotton Billing Dashboard
+  </h1>
+  <a href="{% url 'Add Cotton' %}" class="add-btn shadow-md hover:shadow-lg">
+    Add Cotton Entry
+  </a>
+</div>
 
-
-
-
-<button class="bg-amber-400 absolute right-10 rounded-2xl px-10 p-2"><a href='{% url "Add Cotton" %}'>Add Cotton Entry</a></button>
-<div class="container mt-5">
-  <div class="card shadow-lg border-0 pt-15">
-
-    <div class="card-body bg-light">
+<!-- Main Table Section -->
+<div class="container mx-auto px-6">
+  <div class="card border border-gray-200">
+    <div class="card-body bg-gray-50 rounded-lg">
       {% if cotton_entries %}
-        <div class="table-container">
+        <div class="overflow-x-auto">
           <table class="excel-table">
             <thead>
               <tr>
@@ -87,24 +160,24 @@
                 <td>{{ item.ginning_name }}</td>
                 <td>{{ item.market_rate }}</td>
                 <td>{{ item.bedding_rate }}</td>
-                <td class="fw-bold text-success">{{ item.total_amount }}</td>
+                <td class="font-semibold text-green-600">{{ item.total_amount }}</td>
                 <td>{{ item.advance_paid }}</td>
-                <td class="fw-bold {% if item.balance_amount > 0 %}text-danger{% else %}text-success{% endif %}">
+                <td class="font-semibold {% if item.balance_amount > 0 %}text-red-600{% else %}text-green-600{% endif %}">
                   {{ item.balance_amount }}
                 </td>
                 <td>{{ item.date_of_entry|date:"d-m-Y H:i" }}</td>
                 <td>{{ item.date_of_unloading|date:"d-m-Y H:i" }}</td>
                 <td>
                   {% if item.is_paid %}
-                    <span class="badge bg-success">Paid</span>
+                    <span class="badge badge-success">Paid</span>
                   {% else %}
-                    <span class="badge bg-danger">Unpaid</span>
+                    <span class="badge badge-danger">Unpaid</span>
                   {% endif %}
                 </td>
                 <td>
-                  {% comment %} <a href="{% url 'download_receipt' item.id %}" class="btn btn-sm btn-outline-primary">
+                  <a href="{% url 'GenerateReceipt' item.id %}" class="download-link flex items-center justify-center gap-1">
                     <i class="bi bi-download"></i> Download
-                  </a> {% endcomment %}
+                  </a>
                 </td>
               </tr>
               {% endfor %}
@@ -112,11 +185,13 @@
           </table>
         </div>
       {% else %}
-        <div class="alert alert-info text-center fs-5 mb-0 rounded-3">
+        <div class="text-center text-gray-600 text-lg py-8">
+          <i class="bi bi-inbox text-4xl mb-3 text-blue-500"></i><br>
           No Cotton Data Available
         </div>
       {% endif %}
     </div>
   </div>
 </div>
+
 {% endblock %}
