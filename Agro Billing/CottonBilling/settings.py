@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'tailwind',
     'theme',
     'CottonApp',
-    # 'django_afip'
+    'KUBS'
 ]
 
 MIDDLEWARE = [
