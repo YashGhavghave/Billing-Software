@@ -8,12 +8,19 @@
     {% tailwind_css %}
 </head>
 <body>
-        {% comment %} <h1 class="h-19 bg-orange-500 text-center text-white text-3xl p-3">
-           Hello world! its working
-        </h1> {% endcomment %}
+    {% comment %} {% block cotton %}
+    <button>
+        <a href="/cottonapp/" class="add-btn shadow-md hover:shadow-lg">
+            Cotton Data
+        </a>
+    </button>
+    {% endblock %} {% endcomment %}
     <div class="form">
         {% block form %}{% endblock %}
     </div>
+
+
+
     <div>
         {% block content %}
             Hey
