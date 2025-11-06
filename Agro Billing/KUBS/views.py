@@ -1,9 +1,53 @@
 from django.shortcuts import redirect, render
 from . import models
 from . import forms
+from django.db.models import Q
 
+
+
+#pending home view
 def home(request):
-    return render(request, 'KUBS_home.html')
+    query = request.GET.get('q', '').strip()
+    grains_entries = models.KUBS_Grains_Data.objects.all().order_by('-id')
+   
+    if query:
+        grains_entries = grains_entries.filter(
+            Q(farmers_name__icontains=query) |
+            Q(driver_name__icontains=query) |
+            Q(market_rate__icontains=query) |
+            Q(bedding_rate__icontains=query) |
+            Q(total_amount__icontains=query) |
+            Q(advance_paid__icontains=query) |
+            Q(balance_amount__icontains=query)|
+            Q(name__icontains=query) |
+            Q(contact_number__icontains=query) |
+            Q(address__icontains=query)|
+            Q(driver_name__icontains=query) |
+            Q(vehicle_number__icontains=query) |
+            Q(mobile_number__icontains=query) |
+            # Q(vehicle_weight__icontains=query)|
+            Q(driver__driver_name__icontains=query) |
+            Q(ginning_name__icontains=query) |
+            Q(loaded_vehicle_weight__icontains=query) |
+            Q(unloading_vehicle_weight__icontains=query) |
+            Q(net_weight__icontains=query)
+        )
+
+
+    invoices = models.GrainInvoiceSettings.objects.all().order_by('-id')
+
+    context = {
+        'invoices': invoices,
+        'grains_entries': grains_entries,
+        'query': query,
+    }
+    return render(request, 'KUBS_home.html', context)
+
+
+    # return render(request, 'KUBS_home.html')
+
+
+
 
 def grains_data_entry(request):
     if request.method == 'POST':
@@ -52,7 +96,7 @@ def AddGrainsData(request):
         form= forms.GrainsDataForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect("/home")
+            return redirect("kubs_home")
     else:
         form = forms.GrainsDataForm()
     return render(request, "add_grains.html", {"form": form})
