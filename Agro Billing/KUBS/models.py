@@ -47,7 +47,7 @@ class GrainInvoiceSettings(models.Model):
     driver_contact_number = models.CharField("Driver Contact Number", max_length=15, blank=True, null=True)
     vehicle_number = models.CharField("Vehicle Number", max_length=20, blank=True, null=True)
     grain_type = models.CharField("Grain Type", max_length=20, choices=GrainsData_Choices)
-    buyer_name = models.CharField("Buyer Name", max_length=100)
+    buyer_name = models.CharField("Buyer Name", max_length=80)
     market_rate = models.FloatField("Market Rate (₹ per Quintal)")
     bedding_rate = models.FloatField("Bedding Rate (₹ per Quintal)")
     quantity = models.FloatField("Total Quantity (kg)")

@@ -6,5 +6,5 @@ urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('', views.home, name='kubs_home'),
     path('AddGrainsData/', views.AddGrainsData, name='AddGrainsData'),
-    path('grains-data-entry/', views.grains_data_entry, name='Kubs_grains_data_entry'),
+    path('invoice/pdf/<int:invoice_id>/', views.GenerateReceipt, name='GenerateReceipt')
 ]

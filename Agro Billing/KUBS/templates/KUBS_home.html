@@ -169,9 +169,9 @@
                   {% endif %}
                 </td>
                 <td>
-                  {% comment %} <a href="{% url '' item.id %}" class="download-link flex items-center justify-center gap-1">
+                  <a href="{% url 'GenerateReceipt' item.id %}" class="download-link flex items-center justify-center gap-1">
                     <i class="bi bi-download"></i> Download
-                  </a> {% endcomment %}
+                  </a> 
                 </td>
               </tr>
               {% endfor %}
