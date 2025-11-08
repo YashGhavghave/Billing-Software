@@ -1,191 +1,203 @@
-{% extends "index.html" %}
 {% load static tailwind_tags %}
 
-<title>
-  {% block Title %} Grains Billing | Dashboard {% endblock %}
-</title>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grains Billing | Dashboard</title>
+    {% tailwind_css %}
+  </head>
+  <body>
+    <style>
+      /* Background & Typography */
+      body {
+        background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+        min-height: 100vh;
+        font-family: "Inter", sans-serif;
+      }
 
-{% block content %}
-{% tailwind_css %}
+      /* Table Styling */
+      .excel-table {
+        border-collapse: collapse;
+        width: 100%;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      }
 
-<style>
-  /* Background & Typography */
-  body {
-    background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
-    min-height: 100vh;
-    font-family: 'Inter', sans-serif;
-  }
+      .excel-table th,
+      .excel-table td {
+        border: 1px solid #e5e7eb;
+        padding: 10px 12px;
+        text-align: center;
+        font-size: 14px;
+      }
 
-  /* Table Styling */
-  .excel-table {
-    border-collapse: collapse;
-    width: 100%;
-    background: #fff;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  }
+      .excel-table th {
+        background: linear-gradient(to right, #16a34a, #22c55e);
+        color: #fff;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
 
-  .excel-table th, .excel-table td {
-    border: 1px solid #e5e7eb;
-    padding: 10px 12px;
-    text-align: center;
-    font-size: 14px;
-  }
+      .excel-table tr:nth-child(even) {
+        background-color: #f9fafb;
+      }
 
-  .excel-table th {
-    background: linear-gradient(to right, #16a34a, #22c55e);
-    color: #fff;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-  }
+      .excel-table tr:hover {
+        background-color: #dcfce7;
+        transition: background-color 0.2s;
+      }
 
-  .excel-table tr:nth-child(even) {
-    background-color: #f9fafb;
-  }
+      /* Card Styling */
+      .card {
+        border-radius: 16px;
+        background: white;
+        padding: 2rem;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+        margin-top: 2rem;
+      }
 
-  .excel-table tr:hover {
-    background-color: #dcfce7;
-    transition: background-color 0.2s;
-  }
+      /* Add Button */
+      .add-btn {
+        background: linear-gradient(to right, #4ade80, #22c55e);
+        color: #064e3b;
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 12px;
+        transition: all 0.2s ease-in-out;
+      }
 
-  /* Card Styling */
-  .card {
-    border-radius: 16px;
-    background: white;
-    padding: 2rem;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
-    margin-top: 2rem;
-  }
+      .add-btn:hover {
+        transform: scale(1.05);
+        background: linear-gradient(to right, #86efac, #22c55e);
+      }
 
-  /* Add Button */
-  .add-btn {
-    background: linear-gradient(to right, #4ade80, #22c55e);
-    color: #064e3b;
-    font-weight: 600;
-    padding: 10px 20px;
-    border-radius: 12px;
-    transition: all 0.2s ease-in-out;
-  }
+      .badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 600;
+      }
 
-  .add-btn:hover {
-    transform: scale(1.05);
-    background: linear-gradient(to right, #86efac, #22c55e);
-  }
+      .badge-success {
+        background-color: #22c55e;
+        color: white;
+      }
 
-  .badge {
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: 600;
-  }
+      .badge-danger {
+        background-color: #ef4444;
+        color: white;
+      }
 
-  .badge-success {
-    background-color: #22c55e;
-    color: white;
-  }
+      .download-link {
+        color: #16a34a;
+        font-weight: 600;
+        text-decoration: none;
+      }
 
-  .badge-danger {
-    background-color: #ef4444;
-    color: white;
-  }
+      .download-link:hover {
+        text-decoration: underline;
+      }
+    </style>
 
-  .download-link {
-    color: #16a34a;
-    font-weight: 600;
-    text-decoration: none;
-  }
-
-  .download-link:hover {
-    text-decoration: underline;
-  }
-</style>
-
-<!-- Header -->
-<div class="flex justify-between items-center mb-6 mt-6 px-8">
-  <h1 class="text-3xl font-bold text-green-700 drop-shadow-sm">
-    Grains Billing Dashboard
-  </h1>
-  <a href="{% url 'AddGrainsData' %}" class="add-btn shadow-md hover:shadow-lg">
-    Add Grain Entry
-  </a>
-</div>
-
-<!-- Table Section -->
-<div class="container mx-auto px-6">
-  <div class="card border border-gray-200">
-    <div class="card-body bg-gray-50 rounded-lg">
-      {% if grains_entries %}
-        <div class="overflow-x-auto">
-          <table class="excel-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Farmer Name</th>
-                <th>Contact No.</th>
-                <th>Driver Name</th>
-                <th>Driver Contact</th>
-                <th>Vehicle No.</th>
-                <th>Grain Type</th>
-                <th>Buyer Name</th>
-                <th>Market Rate (₹)</th>
-                <th>Bedding Rate (₹)</th>
-                <th>Quantity (kg)</th>
-                <th>Total (₹)</th>
-                <th>Advance (₹)</th>
-                <th>Balance (₹)</th>
-                <th>Date</th>
-                <th>Payment</th>
-                <th>Receipt</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {% for item in grains_entries %}
-              <tr>
-                <td>{{ item.id }}</td>
-                <td>{{ item.farmers_name }}</td>
-                <td>{{ item.contact_number }}</td>
-                <td>{{ item.driver_name|default:"-" }}</td>
-                <td>{{ item.driver_contact_number|default:"-" }}</td>
-                <td>{{ item.vehicle_number|default:"-" }}</td>
-                <td>{{ item.grain_type }}</td>
-                <td>{{ item.buyer_name }}</td>
-                <td>{{ item.market_rate }}</td>
-                <td>{{ item.bedding_rate }}</td>
-                <td>{{ item.quantity }}</td>
-                <td class="font-semibold text-green-600">{{ item.total_amount }}</td>
-                <td>{{ item.advance_amount }}</td>
-                <td class="font-semibold {% if item.balance_amount > 0 %}text-red-600{% else %}text-green-600{% endif %}">
-                  {{ item.balance_amount }}
-                </td>
-                <td>{{ item.date_of_transaction|date:"d-m-Y" }}</td>
-                <td>
-                  {% if item.balance_amount == 0 %}
-                    <span class="badge badge-success">Paid</span>
-                  {% else %}
-                    <span class="badge badge-danger">Unpaid</span>
-                  {% endif %}
-                </td>
-                <td>
-                  <a href="{% url 'GenerateReceipt' item.id %}" class="download-link flex items-center justify-center gap-1">
-                    <i class="bi bi-download"></i> Download
-                  </a> 
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      {% else %}
-        <div class="text-center text-gray-600 text-lg py-8">
-          <i class="bi bi-inbox text-4xl mb-3 text-green-500"></i><br>
-          No Grain Data Available
-        </div>
-      {% endif %}
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-6 mt-6 px-8">
+      <h1 class="text-3xl font-bold text-green-700 drop-shadow-sm">
+        Grains Billing Dashboard
+      </h1>
+      <a
+        href="{% url 'AddGrainsData' %}"
+        class="add-btn shadow-md hover:shadow-lg"
+      >
+        Add Grain Entry
+      </a>
     </div>
-  </div>
-</div>
 
-{% endblock %}
+    <!-- Table Section -->
+    <div class="container mx-auto px-6">
+      <div class="card border border-gray-200">
+        <div class="card-body bg-gray-50 rounded-lg">
+          {% if grains_entries %}
+          <div class="overflow-x-auto">
+            <table class="excel-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Farmer Name</th>
+                  <th>Contact No.</th>
+                  <th>Driver Name</th>
+                  <th>Driver Contact</th>
+                  <th>Vehicle No.</th>
+                  <th>Grain Type</th>
+                  <th>Buyer Name</th>
+                  <th>Market Rate (₹)</th>
+                  <th>Bedding Rate (₹)</th>
+                  <th>Quantity (kg)</th>
+                  <th>Total (₹)</th>
+                  <th>Advance (₹)</th>
+                  <th>Balance (₹)</th>
+                  <th>Date</th>
+                  <th>Payment</th>
+                  <th>Receipt</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {% for item in grains_entries %}
+                <tr>
+                  <td>{{ item.id }}</td>
+                  <td>{{ item.farmers_name }}</td>
+                  <td>{{ item.contact_number }}</td>
+                  <td>{{ item.driver_name|default:"-" }}</td>
+                  <td>{{ item.driver_contact_number|default:"-" }}</td>
+                  <td>{{ item.vehicle_number|default:"-" }}</td>
+                  <td>{{ item.grain_type }}</td>
+                  <td>{{ item.buyer_name }}</td>
+                  <td>{{ item.market_rate }}</td>
+                  <td>{{ item.bedding_rate }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td class="font-semibold text-green-600">
+                    {{ item.total_amount }}
+                  </td>
+                  <td>{{ item.advance_amount }}</td>
+                  <td
+                    class="font-semibold {% if item.balance_amount > 0 %}text-red-600{% else %}text-green-600{% endif %}"
+                  >
+                    {{ item.balance_amount }}
+                  </td>
+                  <td>{{ item.date_of_transaction|date:"d-m-Y" }}</td>
+                  <td>
+                    {% if item.balance_amount == 0 %}
+                    <span class="badge badge-success">Paid</span>
+                    {% else %}
+                    <span class="badge badge-danger">Unpaid</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <a
+                      href="{% url 'GenerateReceipt' item.id %}"
+                      class="download-link flex items-center justify-center gap-1"
+                    >
+                      <i class="bi bi-download"></i> Download
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="text-center text-gray-600 text-lg py-8">
+            <i class="bi bi-inbox text-4xl mb-3 text-green-500"></i><br />
+            No Grain Data Available
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
