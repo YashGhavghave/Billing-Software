@@ -1,209 +1,222 @@
-{% load static tailwind_tags%}
+{% load static tailwind_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cotton Billing | Dashboard</title>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cotton Billing | Dashboard</title>
   {% tailwind_css %}
-  <body>
-    <style>
-      /* Page Layout Enhancements */
-      body {
-        background: linear-gradient(135deg, #eef2ff, #f8fafc);
-        min-height: 100vh;
-        font-family: "Inter", sans-serif;
-      }
+</head>
 
-      /* Table Styling */
-      .excel-table {
-        border-collapse: collapse;
-        width: 100%;
-        background: #fff;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-      }
+<body class="min-h-screen">
 
-      .excel-table th,
-      .excel-table td {
-        border: 1px solid #e5e7eb;
-        padding: 10px 12px;
-        text-align: center;
-        font-size: 14px;
-      }
+<style>
+  body {
+    background: linear-gradient(135deg, #eef2ff, #f8fafc);
+    font-family: "Inter", sans-serif;
+  }
 
-      .excel-table th {
-        background: linear-gradient(to right, #2563eb, #3b82f6);
-        color: #fff;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-      }
+  /* Table Styling */
+  .excel-table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 1200px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  }
 
-      .excel-table tr:nth-child(even) {
-        background-color: #f9fafb;
-      }
+  .excel-table th,
+  .excel-table td {
+    border: 1px solid #e5e7eb;
+    padding: 10px 12px;
+    text-align: center;
+    font-size: 14px;
+    white-space: nowrap;
+  }
 
-      .excel-table tr:hover {
-        background-color: #e0f2fe;
-        transition: background-color 0.2s;
-      }
+  .excel-table th {
+    background: linear-gradient(to right, #2563eb, #3b82f6);
+    color: #fff;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
 
-      /* Card Styling */
-      .card {
-        border-radius: 16px;
-        background: white;
-        padding: 2rem;
-        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
-        margin-top: 2rem;
-      }
+  .excel-table tr:nth-child(even) {
+    background-color: #f9fafb;
+  }
 
-      /* Header button */
-      .add-btn {
-        background: linear-gradient(to right, #fbbf24, #f59e0b);
-        color: #111827;
-        font-weight: 600;
-        padding: 10px 20px;
-        border-radius: 12px;
-        transition: all 0.2s ease-in-out;
-      }
+  .excel-table tr:hover {
+    background-color: #e0f2fe;
+    transition: background-color 0.2s;
+  }
 
-      .add-btn:hover {
-        transform: scale(1.05);
-        background: linear-gradient(to right, #facc15, #f59e0b);
-      }
+  /* Card */
+  .card {
+    border-radius: 16px;
+    background: white;
+    padding: 1.5rem;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+  }
 
-      .badge {
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 13px;
-        font-weight: 600;
-      }
+  /* Add Button */
+  .add-btn {
+    background: linear-gradient(to right, #fbbf24, #f59e0b);
+    color: #111827;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 12px;
+    transition: all 0.2s ease-in-out;
+  }
 
-      .badge-success {
-        background-color: #22c55e;
-        color: white;
-      }
+  .add-btn:hover {
+    transform: scale(1.05);
+    background: linear-gradient(to right, #facc15, #f59e0b);
+  }
 
-      .badge-danger {
-        background-color: #ef4444;
-        color: white;
-      }
+  /* Badges */
+  .badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
 
-      .download-link {
-        color: #2563eb;
-        font-weight: 600;
-        text-decoration: none;
-      }
+  .badge-success {
+    background-color: #22c55e;
+    color: white;
+  }
 
-      .download-link:hover {
-        text-decoration: underline;
-      }
-    </style>
+  .badge-danger {
+    background-color: #ef4444;
+    color: white;
+  }
 
-    <!-- Top Header Section -->
-    <div class="flex justify-between items-center mb-6 mt-6 px-8">
-      <h1 class="text-3xl font-bold text-blue-700 drop-shadow-sm">
-        Cotton Billing Dashboard
-      </h1>
-      <a
-        href="{% url 'Add Cotton' %}"
-        class="add-btn shadow-md hover:shadow-lg"
-      >
-        Add Cotton Entry
-      </a>
-    </div>
+  .download-link {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+  }
 
-    <!-- Main Table Section -->
-    <div class="container mx-auto px-6">
-      <div class="card border border-gray-200">
-        <div class="card-body bg-gray-50 rounded-lg">
-          {% if cotton_entries %}
-          <div class="overflow-x-auto">
-            <table class="excel-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Farmer Name</th>
-                  <th>Contact No.</th>
-                  <th>Address</th>
-                  <th>Driver Name</th>
-                  <th>Vehicle No.</th>
-                  <th>Mobile No.</th>
-                  <th>Loaded (kg)</th>
-                  <th>Unloaded (kg)</th>
-                  <th>Net (kg)</th>
-                  <th>Ginning</th>
-                  <th>Market Rate (₹)</th>
-                  <th>Bedding Rate (₹)</th>
-                  <th>Total (₹)</th>
-                  <th>Advance (₹)</th>
-                  <th>Balance (₹)</th>
-                  <th>Date of Entry</th>
-                  <th>Date of Unloading</th>
-                  <th>Payment</th>
-                  <th>Receipt</th>
-                </tr>
-              </thead>
+  .download-link:hover {
+    text-decoration: underline;
+  }
 
-              <tbody>
-                {% for item in cotton_entries %}
-                <tr>
-                  <td>{{ item.id }}</td>
-                  <td>{{ item.name }}</td>
-                  <td>{{ item.contact_number }}</td>
-                  <td>{{ item.address|default:"-" }}</td>
-                  <td>{{ item.driver_name }}</td>
-                  <td>{{ item.vehicle_number }}</td>
-                  <td>{{ item.mobile_number }}</td>
-                  <td>{{ item.loaded_vehicle_weight }}</td>
-                  <td>{{ item.unloading_vehicle_weight }}</td>
-                  <td>{{ item.net_weight }}</td>
-                  <td>{{ item.ginning_name }}</td>
-                  <td>{{ item.market_rate }}</td>
-                  <td>{{ item.bedding_rate }}</td>
-                  <td class="font-semibold text-green-600">
-                    {{ item.total_amount }}
-                  </td>
-                  <td>{{ item.advance_paid }}</td>
-                  <td
-                    class="font-semibold {% if item.balance_amount > 0 %}text-red-600{% else %}text-green-600{% endif %}"
-                  >
-                    {{ item.balance_amount }}
-                  </td>
-                  <td>{{ item.date_of_entry|date:"d-m-Y H:i" }}</td>
-                  <td>{{ item.date_of_unloading|date:"d-m-Y H:i" }}</td>
-                  <td>
-                    {% if item.is_paid %}
-                    <span class="badge badge-success">Paid</span>
-                    {% else %}
-                    <span class="badge badge-danger">Unpaid</span>
-                    {% endif %}
-                  </td>
-                  <td>
-                    <a
-                      href="{% url 'GenerateReceipt' item.id %}"
-                      class="download-link flex items-center justify-center gap-1"
-                    >
-                      <i class="bi bi-download"></i> Download
-                    </a>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-          {% else %}
-          <div class="text-center text-gray-600 text-lg py-8">
-            <i class="bi bi-inbox text-4xl mb-3 text-blue-500"></i><br />
-            No Cotton Data Available
-          </div>
-          {% endif %}
-        </div>
+  /* Mobile Tweaks */
+  @media (max-width: 640px) {
+    .excel-table th,
+    .excel-table td {
+      font-size: 12px;
+      padding: 8px;
+    }
+
+    .card {
+      padding: 1rem;
+    }
+  }
+</style>
+
+<!-- Header -->
+<div class="flex flex-col sm:flex-row sm:justify-between sm:items-center
+            gap-4 mt-6 mb-6 px-4 sm:px-8 text-center sm:text-left">
+  <h1 class="text-2xl sm:text-3xl font-bold text-blue-700 drop-shadow-sm">
+    Cotton Billing Dashboard
+  </h1>
+
+  <a href="{% url 'Add Cotton' %}"
+     class="add-btn shadow-md hover:shadow-lg w-full sm:w-auto text-center">
+    Add Cotton Entry
+  </a>
+</div>
+
+<!-- Table Section -->
+<div class="container mx-auto px-3 sm:px-6 lg:px-8">
+  <div class="card border border-gray-200">
+    <div class="bg-gray-50 rounded-lg">
+
+      {% if cotton_entries %}
+      <div class="overflow-x-auto relative">
+        <table class="excel-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Farmer</th>
+              <th>Contact</th>
+              <th>Address</th>
+              <th>Driver</th>
+              <th>Vehicle</th>
+              <th>Mobile</th>
+              <th>Loaded</th>
+              <th>Unloaded</th>
+              <th>Net</th>
+              <th>Ginning</th>
+              <th>Market ₹</th>
+              <th>Bedding ₹</th>
+              <th>Total ₹</th>
+              <th>Advance ₹</th>
+              <th>Balance ₹</th>
+              <th>Entry Date</th>
+              <th>Unload Date</th>
+              <th>Status</th>
+              <th>Receipt</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for item in cotton_entries %}
+            <tr>
+              <td>{{ item.id }}</td>
+              <td>{{ item.name }}</td>
+              <td>{{ item.contact_number }}</td>
+              <td>{{ item.address|default:"-" }}</td>
+              <td>{{ item.driver_name }}</td>
+              <td>{{ item.vehicle_number }}</td>
+              <td>{{ item.mobile_number }}</td>
+              <td>{{ item.loaded_vehicle_weight }}</td>
+              <td>{{ item.unloading_vehicle_weight }}</td>
+              <td>{{ item.net_weight }}</td>
+              <td>{{ item.ginning_name }}</td>
+              <td>{{ item.market_rate }}</td>
+              <td>{{ item.bedding_rate }}</td>
+              <td class="font-semibold text-green-600">
+                {{ item.total_amount }}
+              </td>
+              <td>{{ item.advance_paid }}</td>
+              <td class="font-semibold {% if item.balance_amount > 0 %}text-red-600{% else %}text-green-600{% endif %}">
+                {{ item.balance_amount }}
+              </td>
+              <td>{{ item.date_of_entry|date:"d-m-Y H:i" }}</td>
+              <td>{{ item.date_of_unloading|date:"d-m-Y H:i" }}</td>
+              <td>
+                {% if item.is_paid %}
+                <span class="badge badge-success">Paid</span>
+                {% else %}
+                <span class="badge badge-danger">Unpaid</span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="{% url 'GenerateReceipt' item.id %}"
+                   class="download-link">
+                  Download
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
+      {% else %}
+      <div class="text-center text-gray-600 text-base sm:text-lg py-12">
+        No Cotton Data Available
+      </div>
+      {% endif %}
+
     </div>
-  </body>
+  </div>
+</div>
+
+</body>
 </html>

@@ -2,44 +2,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block Title %}Mandi Billing Software{% endblock %}</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block Title %}Mandi Billing Software{% endblock %}</title>
+  {% tailwind_css %}
 </head>
-{% tailwind_css %}
-<body class="min-h-screen bg-gradient-to-br from-green-300 via-white to-green-300 items-center justify-center">
 
-    <!-- Header -->
-    <header class="mb-10 text-center relative top-[35vh]">
-        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 tracking-tight drop-shadow-sm">
-            Mandi Billing Software
-        </h1>
-        <p class="mt-3 text-lg text-gray-600">Manage your cotton and grain bills effortlessly</p>
-    </header>
+<body class="min-h-screen bg-gradient-to-br from-green-300 via-white to-green-300
+             flex flex-col items-center justify-center px-4">
 
-    <!-- Main Content Block -->
-    <main class="w-full max-w-md text-center gap-4">
-        {% block content %}
-        <div class=" flex relative top-[40vh] gap-[10vw] w-full left-[35vw]">
-            <!-- Cotton Bill Button -->
-            <a href="/cottonapp" 
-               class="flex-col block w-full py-4 px-6 text-lg font-semibold text-black bg-gradient-to-t from-green-300 to-white-600 rounded-2xl shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200 ease-out">
-                 Cotton Bill
-            </a>
+  <!-- Header -->
+  <header class="text-center mb-10">
+    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold
+               text-gray-800 tracking-tight drop-shadow-sm">
+      Mandi Billing Software
+    </h1>
+    <p class="mt-3 text-base sm:text-lg text-gray-600">
+      Manage your cotton and grain bills effortlessly
+    </p>
+  </header>
 
-            <!-- Grain Bill Button -->
-            <a href="/kubs"
-               class="flex-col block w-full py-4 px-6 text-lg font-semibold text-black bg-gradient-to-t from-green-300 to-white-600 rounded-2xl shadow-md hover:shadow-lg hover:scale-105 transition-transform duration-200 ease-out">
-                Grain Bill
-            </a>
-        </div>
-        {% endblock %}
-    </main>
+  <!-- Main Content -->
+  <main class="w-full max-w-2xl">
+    {% block content %}
+    <div class="flex flex-col sm:flex-row gap-6 sm:gap-10 justify-center">
 
-    <!-- Optional Footer -->
-    <footer class="mt-16 text-gray-500 text-sm relative top-[60vh] text-center">
-        <p>&copy; {{ current_year|default:2025 }} Mandi Billing Software. All rights reserved.</p>
-    </footer>
+      <!-- Cotton Bill -->
+      <a href="/cottonapp"
+         class="flex items-center justify-center w-full sm:w-60
+                py-4 px-6 text-lg font-semibold text-black
+                bg-gradient-to-t from-green-300 to-white
+                rounded-2xl shadow-md hover:shadow-lg
+                hover:scale-105 transition duration-200">
+        Cotton Bill
+      </a>
+
+      <!-- Grain Bill -->
+      <!-- <a href="/kubs"
+         class="flex items-center justify-center w-full sm:w-60
+                py-4 px-6 text-lg font-semibold text-black
+                bg-gradient-to-t from-green-300 to-white
+                rounded-2xl shadow-md hover:shadow-lg
+                hover:scale-105 transition duration-200">
+        Grain Bill
+      </a> -->
+
+    </div>
+    {% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-16 text-gray-500 text-sm text-center">
+    <p>&copy; {{ current_year|default:2025 }} Mandi Billing Software. All rights reserved.</p>
+  </footer>
 
 </body>
 </html>

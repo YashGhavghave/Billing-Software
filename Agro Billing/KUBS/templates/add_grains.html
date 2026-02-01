@@ -2,176 +2,178 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KUBS Grains Data Entry</title>
-    {% tailwind_css %}
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KUBS Grains Data Entry</title>
+  {% tailwind_css %}
+</head>
 
-  <body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-8">
-      <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">
-        KUBS Grains Data Entry
-      </h1>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center px-3 sm:px-6">
 
-      <form method="post" class="space-y-5">
-        {% csrf_token %}
+  <div class="w-full max-w-xl sm:max-w-2xl bg-white shadow-xl rounded-2xl
+              p-5 sm:p-8">
 
-        <!-- Render each field manually for better layout control -->
+    <h1 class="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">
+      KUBS Grains Data Entry
+    </h1>
+
+    <form method="post" class="space-y-4 sm:space-y-5">
+      {% csrf_token %}
+
+      <!-- Farmer -->
+      <div>
+        <label for="id_farmers_name" class="block text-gray-700 font-medium mb-1">
+          Farmer's Name
+        </label>
+        {{ form.farmers_name }}
+      </div>
+
+      <div>
+        <label for="id_contact_number" class="block text-gray-700 font-medium mb-1">
+          Contact Number
+        </label>
+        {{ form.contact_number }}
+      </div>
+
+      <!-- Driver Info -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label for="id_farmers_name" class="block text-gray-700 font-medium mb-1">
-            Farmer's Name
+          <label for="id_driver_name" class="block text-gray-700 font-medium mb-1">
+            Driver Name
           </label>
-          {{ form.farmers_name }}
-        </div>
-
-        <div>
-          <label for="id_contact_number" class="block text-gray-700 font-medium mb-1">
-            Contact Number
-          </label>
-          {{ form.contact_number }}
-        </div>
-
-        <!-- Driver Info -->
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label for="id_driver_name" class="block text-gray-700 font-medium mb-1">
-              Driver Name
-            </label>
-            {{ form.driver_name }}
-          </div>
-
-          <div>
-            <label for="id_driver_contact_number" class="block text-gray-700 font-medium mb-1">
-              Driver Contact Number
-            </label>
-            {{ form.driver_contact_number }}
-          </div>
+          {{ form.driver_name }}
         </div>
 
         <div>
-          <label for="id_vehicle_number" class="block text-gray-700 font-medium mb-1">
-            Vehicle Number
+          <label for="id_driver_contact_number" class="block text-gray-700 font-medium mb-1">
+            Driver Contact Number
           </label>
-          {{ form.vehicle_number }}
+          {{ form.driver_contact_number }}
         </div>
+      </div>
 
-        <!-- Grain Info -->
+      <div>
+        <label for="id_vehicle_number" class="block text-gray-700 font-medium mb-1">
+          Vehicle Number
+        </label>
+        {{ form.vehicle_number }}
+      </div>
+
+      <!-- Grain Info -->
+      <div>
+        <label for="id_grain_type" class="block text-gray-700 font-medium mb-1">
+          Grain Type
+        </label>
+        {{ form.grain_type }}
+      </div>
+
+      <div>
+        <label for="id_buyer_name" class="block text-gray-700 font-medium mb-1">
+          Buyer Name
+        </label>
+        {{ form.buyer_name }}
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label for="id_grain_type" class="block text-gray-700 font-medium mb-1">
-            Grain Type
+          <label for="id_market_rate" class="block text-gray-700 font-medium mb-1">
+            Market Rate (₹/Quintal)
           </label>
-          {{ form.grain_type }}
+          {{ form.market_rate }}
         </div>
 
         <div>
-          <label for="id_buyer_name" class="block text-gray-700 font-medium mb-1">
-            Buyer Name
+          <label for="id_bedding_rate" class="block text-gray-700 font-medium mb-1">
+            Bedding Rate (₹/Quintal)
           </label>
-          {{ form.buyer_name }}
+          {{ form.bedding_rate }}
         </div>
+      </div>
 
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label for="id_market_rate" class="block text-gray-700 font-medium mb-1">
-              Market Rate (₹/Quintal)
-            </label>
-            {{ form.market_rate }}
-          </div>
-
-          <div>
-            <label for="id_bedding_rate" class="block text-gray-700 font-medium mb-1">
-              Bedding Rate (₹/Quintal)
-            </label>
-            {{ form.bedding_rate }}
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label for="id_quantity" class="block text-gray-700 font-medium mb-1">
-              Weight (Quintals)
-            </label>
-            {{ form.quantity }}
-          </div>
-
-          <div>
-            <label for="id_advance_amount" class="block text-gray-700 font-medium mb-1">
-              Advance Amount (₹)
-            </label>
-            {{ form.advance_amount }}
-          </div>
-        </div>
-
-        <!-- Auto-calculated fields -->
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label for="id_total_amount" class="block text-gray-700 font-medium mb-1">
-              Total Amount (₹)
-            </label>
-            {{ form.total_amount }}
-          </div>
-
-          <div>
-            <label for="id_balance_amount" class="block text-gray-700 font-medium mb-1">
-              Balance Amount (₹)
-            </label>
-            {{ form.balance_amount }}
-          </div>
-        </div>
-
-        <!-- Date -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label for="id_date_of_transaction" class="block text-gray-700 font-medium mb-1">
-            Date of Transaction
+          <label for="id_quantity" class="block text-gray-700 font-medium mb-1">
+            Weight (Quintals)
           </label>
-          {{ form.date_of_transaction }}
+          {{ form.quantity }}
         </div>
 
-        <!-- Submit -->
-        <button
-          type="submit"
-          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
-        >
-          Submit
-        </button>
-      </form>
-    </div>
+        <div>
+          <label for="id_advance_amount" class="block text-gray-700 font-medium mb-1">
+            Advance Amount (₹)
+          </label>
+          {{ form.advance_amount }}
+        </div>
+      </div>
 
-    <!-- 🧮 Auto calculation logic -->
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const quantity = document.getElementById("id_quantity");
-        const beddingRate = document.getElementById("id_bedding_rate");
-        const advanceAmount = document.getElementById("id_advance_amount");
-        const totalAmount = document.getElementById("id_total_amount");
-        const balanceAmount = document.getElementById("id_balance_amount");
-        const dateField = document.getElementById("id_date_of_transaction");
+      <!-- Auto calculated -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label for="id_total_amount" class="block text-gray-700 font-medium mb-1">
+            Total Amount (₹)
+          </label>
+          {{ form.total_amount }}
+        </div>
 
-        function calculate() {
-          const q = parseFloat(quantity?.value) || 0;
-          const r = parseFloat(beddingRate?.value) || 0;
-          const a = parseFloat(advanceAmount?.value) || 0;
+        <div>
+          <label for="id_balance_amount" class="block text-gray-700 font-medium mb-1">
+            Balance Amount (₹)
+          </label>
+          {{ form.balance_amount }}
+        </div>
+      </div>
 
-          const total = q * r;
-          const balance = total - a;
+      <!-- Date -->
+      <div>
+        <label for="id_date_of_transaction" class="block text-gray-700 font-medium mb-1">
+          Date of Transaction
+        </label>
+        {{ form.date_of_transaction }}
+      </div>
 
-          if (totalAmount) totalAmount.value = total.toFixed(2);
-          if (balanceAmount) balanceAmount.value = balance.toFixed(2);
-        }
+      <!-- Submit -->
+      <button
+        type="submit"
+        class="w-full bg-blue-600 hover:bg-blue-700
+               text-white font-semibold py-2.5 px-4
+               rounded-lg transition duration-200">
+        Submit
+      </button>
+    </form>
+  </div>
 
-        // Bind events
-        [quantity, beddingRate, advanceAmount].forEach(el => {
-          if (el) el.addEventListener("input", calculate);
-        });
+<!-- Auto calculation -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const quantity = document.getElementById("id_quantity");
+  const beddingRate = document.getElementById("id_bedding_rate");
+  const advanceAmount = document.getElementById("id_advance_amount");
+  const totalAmount = document.getElementById("id_total_amount");
+  const balanceAmount = document.getElementById("id_balance_amount");
+  const dateField = document.getElementById("id_date_of_transaction");
 
-        // Auto-set today's date if empty
-        if (dateField && !dateField.value) {
-          const today = new Date().toISOString().split("T")[0];
-          dateField.value = today;
-        }
-      });
-    </script>
-  </body>
+  function calculate() {
+    const q = parseFloat(quantity?.value) || 0;
+    const r = parseFloat(beddingRate?.value) || 0;
+    const a = parseFloat(advanceAmount?.value) || 0;
+
+    const total = q * r;
+    const balance = total - a;
+
+    if (totalAmount) totalAmount.value = total.toFixed(2);
+    if (balanceAmount) balanceAmount.value = balance.toFixed(2);
+  }
+
+  [quantity, beddingRate, advanceAmount].forEach(el => {
+    el?.addEventListener("input", calculate);
+  });
+
+  if (dateField && !dateField.value) {
+    dateField.value = new Date().toISOString().split("T")[0];
+  }
+});
+</script>
+
+</body>
 </html>
