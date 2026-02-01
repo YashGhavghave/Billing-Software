@@ -27,9 +27,7 @@ SECRET_KEY = 'django-insecure-mpwdhhl4dw78ni(@pj3eh0!wisgbm#7%57*bq6u^_6zl&145+c
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'billing-software-zkdq.onrender.com', 
-    'localhost', 
-    '127.0.0.1'
+    '*'
 ]
 
 
